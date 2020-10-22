@@ -12,31 +12,49 @@ def get_rating(name, file):
     f.close
 
 
+def get_losers_set(option, options):
+    index_mid = len(options) // 2
+    index_option = options.index(option)
+    head = ()
+    if index_option < index_mid:
+        tail = options[index_option + 1:index_option + index_mid + 1]
+    else:
+        tail = options[index_option + 1:]
+        head = options[:index_mid - len(tail)]
+    return set(tail + head)
+
+
+options = ('gun', 'rock', 'fire', 'scissors', 'snake', 'human', 'tree', 'wolf', 'sponge', 'paper', 'air', 'water',
+           'dragon', 'devil', 'lightning')
+def_options = ('scissors', 'paper', 'rock')
 file = 'rating.txt'
 name = input('Enter your name: ')
 print(f'Hello, {name}')
 rating = get_rating(name, file)
+user_option = input().split(',')
+if len(user_option) < 3:
+    user_option = def_options  # it's better to use 'options' variable as default one
+print('Okay, let\'s start')
 while True:
-    user = input()
-    options = ('rock', 'paper', 'scissors')
+    user_input = input()
     # check input
-    if user == '!exit':
+    if user_input == '!exit':
         print('Bue')
         break
-    elif user == '!rating':
+    elif user_input == '!rating':
         print(f'Your rating: {rating}')
         continue
-    elif user not in options:
+    elif user_input not in options:
         print('Invalid input')
         continue
     # game logic
-    comp = random.choice(options)
-    winners = {'rock': 'paper', 'paper': 'scissors', 'scissors': 'rock'}
-    if user == comp:
+    comp_choice = random.choice(user_option)
+    losers = get_losers_set(user_input, options)
+    if user_input == comp_choice:
         rating += 50
-        print(f'There is a draw ({comp})')
-    elif winners[user] == comp:
-        print(f'Sorry, but the computer chose {comp}')
-    else:
+        print(f'There is a draw ({comp_choice})')
+    elif comp_choice in losers:
         rating += 100
-        print(f'Well done. The computer chose {comp} and failed')
+        print(f'Well done. The computer chose {comp_choice} and failed')
+    else:
+        print(f'Sorry, but the computer chose {comp_choice}')
